@@ -10,8 +10,8 @@ jobs:
         uses: actions/checkout@v4
       - name: build image
         run: |
-          docker build . -t tintindohoang/pagerdutycast:latest
+          docker build . -t tintindohoang/pagerdutycast:testing
       - name: push image to docker hub
         run: |
           docker login -u tintindohoang -p ${{ secrets.DOCKER_HUB_TOKEN }}
-          docker push tintindohoang/pagerdutycast:latest
+          docker push tintindohoang/pagerdutycast:testing
