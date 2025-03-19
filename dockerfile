@@ -4,7 +4,7 @@ FROM python:3.12.3
 COPY app/ /app
 
 #defualt variables
-ENV Time=10
+ENV Time=15
 
 
 # Install FFmpeg and other dependencies
