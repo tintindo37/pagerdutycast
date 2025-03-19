@@ -3,13 +3,9 @@ FROM python:3.12.3
 
 COPY app/ /app
 
-#variables
-ENV NAME=null
-ENV IP=null
-ENV Pagerapi=null
-ENV User=null
-ENV Time=10
-ENV VPNIP=null
+#defualt variables
+ENV Time=15
+
 
 # Install FFmpeg and other dependencies
 RUN apt-get update && \

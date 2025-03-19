@@ -10,7 +10,7 @@ This script checks for triggered alarms in PagerDuty. If an alarm is detected, i
    - `IP`: IP address of the Chromecast-enabled device.
    - `Pagerapi`: PagerDuty API key linked to your account.
    - `User`: User ID found in the address bar of the PagerDuty website.
-   - `Time`: Refresh interval (default: 10 seconds). It should not be set below 15-20 seconds.
+   - `Time`: Refresh interval (default: 15 seconds). It should not be set below 15-20 seconds.
 ```yaml
 version: "3.7"
 services:
@@ -18,10 +18,10 @@ services:
     image: tintindohoang/pagerdutycast:latest
     container_name: pagerdutycast
     environment:
-      - NAME=XYZ  #change this to name of the Chromecast-enabled device
-      - IP=192.168.1.1 #change this to the IP address of the Chromecast-enabled device
-      - Pagerapi=XYZ #change this tp the PagerDuty API key linked to your account
-      - User=XYZ #change this to the User ID found in the address bar of the PagerDuty website
+      - NAME=  #Add the name of the Chromecast-enabled device
+      - IP= #Add the IP address of the Chromecast-enabled device 
+      - Pagerapi= #Add the PagerDuty API key linked to your account
+      - User= #Add the User ID found in the address bar of the PagerDuty website
     restart: unless-stopped
 ```
 ---
@@ -38,7 +38,7 @@ This version includes WireGuard for cloud deployment and remote access to your h
    - `IP`: IP address of the Chromecast-enabled device.
    - `Pagerapi`: PagerDuty API key linked to your account.
    - `User`:  User ID found in the address bar of the PagerDuty website.
-   - `Time`: Refresh interval (default: 10 seconds). It should not be set below 15-20 seconds.
+   - `Time`: Refresh interval (default: 15 seconds). It should not be set below 15-20 seconds.
    - `IPVPN`: VPN IP address of the wireguard node.
 3. Define the path for the WireGuard configuration file. Example: `'/home/ubuntu/wg:/config'`. You only need to specify the directory containing the `wg0.conf` file, not the file itself.
 
@@ -54,11 +54,11 @@ services:
     image: tintindohoang/pagerdutycast:latest
     container_name: pagerdutycast-wg
     environment:
-      - NAME=XYZ  #change this to name of the Chromecast-enabled device
-      - IP=192.168.1.1 #change this to the IP address of the Chromecast-enabled device
-      - Pagerapi=XYZ #change this tp the PagerDuty API key linked to your account
-      - User=XYZ #change this to the User ID found in the address bar of the PagerDuty website
-      - IPVPN=172.168.12.7 #change this to the VPN IP address of the wireguard node
+      - NAME=  #Add the name of the Chromecast-enabled device
+      - IP= #Add the IP address of the Chromecast-enabled device 
+      - Pagerapi= #Add the PagerDuty API key linked to your account
+      - User= #Add the User ID found in the address bar of the PagerDuty website
+      - IPVPN= #Add  the VPN IP address of the wireguard node
     restart: unless-stopped
     network_mode: service:wireguard-my
     healthcheck:
@@ -74,7 +74,7 @@ services:
     networks:
       - net01
     volumes:
-      - '/home/ubuntu/wg:/config'  # Change this to the path where `wg0.conf` is located
+      - '/home/ubuntu/wg:/config'  # add this to the path where `wg0.conf` is located
       - '/lib/modules:/lib/modules:ro'
     environment:
       - PUID=1000
