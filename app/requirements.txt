@@ -4,3 +4,5 @@ requests==2.32.3
 ffmpeg==1.4
 pydub==0.25.1
 ffmpeg-python==0.2.0
+DateTime==5.5
+python-dateutil==2.9.0.post0
