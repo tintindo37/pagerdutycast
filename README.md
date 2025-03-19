@@ -15,7 +15,7 @@ This script checks for triggered alarms in PagerDuty. If an alarm is detected, i
 version: "3.7"
 services:
   pagerdutycast:
-    image: tintindohoang/pagerdutycast:testing
+    image: tintindohoang/pagerdutycast:latest
     container_name: pagerdutycast
     environment:
       - NAME=  #Add the name of the Chromecast-enabled device
@@ -51,7 +51,7 @@ services:
   pagerdutycast:
     depends_on:
       - wireguard
-    image: tintindohoang/pagerdutycast:testing
+    image: tintindohoang/pagerdutycast:latest
     container_name: pagerdutycast-wg
     environment:
       - NAME=  #Add the name of the Chromecast-enabled device

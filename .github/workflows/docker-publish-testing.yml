@@ -4,21 +4,17 @@ on:
     branches:
       - testing
   workflow_dispatch:
-
+ 
 jobs:
   publish_images:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: checkout
         uses: actions/checkout@v4
-
-      - name: Build Docker image
+      - name: build image
         run: |
           docker build . -t tintindohoang/pagerdutycast:testing
-      - name: Log in to Docker Hub
+      - name: push image to docker hub
         run: |
           docker login -u tintindohoang -p ${{ secrets.DOCKER_HUB_TOKEN }}
-
-      - name: Push Docker image to Docker Hub
-        run: |
           docker push tintindohoang/pagerdutycast:testing
