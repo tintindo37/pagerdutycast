@@ -1,0 +1,24 @@
+name: Build and Publish Image to Docker Hub Testing Repo
+on:
+  push:
+    branches:
+      - testing
+  workflow_dispatch:
+
+jobs:
+  publish_images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: |
+          docker build . -t tintindohoang/pagerdutycast:testing
+      - name: Log in to Docker Hub
+        run: |
+          docker login -u tintindohoang -p ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push tintindohoang/pagerdutycast:testing
