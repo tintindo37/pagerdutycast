@@ -18,10 +18,10 @@ services:
     image: tintindohoang/pagerdutycast:testing
     container_name: pagerdutycast
     environment:
-      - NAME=XYZ  #change this to name of the Chromecast-enabled device
-      - IP=192.168.1.1 #change this to the IP address of the Chromecast-enabled device
-      - Pagerapi=XYZ #change this tp the PagerDuty API key linked to your account
-      - User=XYZ #change this to the User ID found in the address bar of the PagerDuty website
+      - NAME=  #change this to name of the Chromecast-enabled device
+      - IP= #change this to the IP address of the Chromecast-enabled device
+      - Pagerapi= #change this tp the PagerDuty API key linked to your account
+      - User= #change this to the User ID found in the address bar of the PagerDuty website
     restart: unless-stopped
 ```
 ---
@@ -54,11 +54,11 @@ services:
     image: tintindohoang/pagerdutycast:testing
     container_name: pagerdutycast-wg
     environment:
-      - NAME=XYZ  #change this to name of the Chromecast-enabled device
-      - IP=192.168.1.1 #change this to the IP address of the Chromecast-enabled device
-      - Pagerapi=XYZ #change this tp the PagerDuty API key linked to your account
-      - User=XYZ #change this to the User ID found in the address bar of the PagerDuty website
-      - IPVPN=172.168.12.7 #change this to the VPN IP address of the wireguard node
+      - NAME=  #change this to name of the Chromecast-enabled device
+      - IP= #change this to the IP address of the Chromecast-enabled device 
+      - Pagerapi= #change this tp the PagerDuty API key linked to your account
+      - User= #change this to the User ID found in the address bar of the PagerDuty website
+      - IPVPN= #change this to the VPN IP address of the wireguard node
     restart: unless-stopped
     network_mode: service:wireguard-my
     healthcheck:

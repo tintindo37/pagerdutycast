@@ -19,11 +19,10 @@ env3 = os.getenv("Pagerapi")
 env4 = os.getenv("User")
 env5 = os.getenv("Time")
 
-if env1 ==" none" or env2 == "none" or env3 == "none" or env4 == "none":
+if not env1 or not env2 or not env3 or not env4:
     raise ValueError("Error: One or more required environment variables are missing!")
     sys.exit(0)
-else:
-#conf for docker
+else: #conf for docker
     CAST_IP = env1 # IP of Google Home Mini or any Chromecast-enabled device
     CAST_NAME = env2  # Name of Google Home Mini or any Chromecast-enabled device
     PAGERDUTY_API_KEY = env3 # pg api
