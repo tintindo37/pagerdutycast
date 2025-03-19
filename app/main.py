@@ -10,6 +10,7 @@ from dateutil import parser as date_parser
 from pydub import AudioSegment
 from io import BytesIO
 from common import add_log_arguments, configure_logging
+import logging
 
 
 #env from docker 
@@ -41,9 +42,12 @@ configure_logging(args)
 
 #loging
 def log_message(message):
-    log_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S %A")  # Format time
-    print(f"{log_time} - {message}")  # log_message log
+    logging.info(message) #use logging.info to log information so docker will see
 
+# Configure logging to output to stdout
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S %A')
 # Find Chromecast
 chromecasts, browser = pychromecast.get_listed_chromecasts(friendly_names=[args.cast], known_hosts=[CAST_IP])
 if not chromecasts:
