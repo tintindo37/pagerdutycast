@@ -5,31 +5,19 @@ import urllib.parse
 import requests
 import pychromecast
 import json
-import os
+import ffmpeg
 from pydub import AudioSegment
 from io import BytesIO
 
 from common import add_log_arguments, configure_logging
 
-#env from docker 
-env1 = os.getenv("IP")
-env2 = os.getenv("NAME")
-env3 = os.getenv("Pagerapi")
-env4 = os.getenv("User")
-env5 = os.getenv("Time")
-
-if env1 ==" none" or env2 == "none" or env3 == "none" or env4 == "none":
-    raise ValueError("Error: One or more required environment variables are missing!")
-    sys.exit(0)
-else:
-#conf for docker
-    CAST_IP = env1 # IP of Google Home Mini or any Chromecast-enabled device
-    CAST_NAME = env2  # Name of Google Home Mini or any Chromecast-enabled device
-    PAGERDUTY_API_KEY = env3 # pg api
-    USER_ID = env4 #pagerduty user
-    CHECK_INTERVAL = int(env5)  # seconds between checks
-#Configuration
+# Configuration
+CAST_NAME = "XYZ"  # Name of Google Home Mini or any Chromecast-enabled device
+CAST_IP = "192.168.1.1"  # IP of Google Home Mini or any Chromecast-enabled device
 BASE_TTS_URL = "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q={}&tl=En-gb" #tts provider 
+PAGERDUTY_API_KEY = "XYZ" # Pagerduty api key 
+USER_ID = "XYZ" # Pagerduty user id
+CHECK_INTERVAL = 30  # seconds between checks
 Ring_Url = "https://cdn.pixabay.com/download/audio/2025/01/13/audio_902fc3eeb8.mp3?filename=elevator-chimenotification-ding-recreation-287560.mp3"
 parser = argparse.ArgumentParser(description="PagerDuty to TTS on Chromecast")
 add_log_arguments(parser)
