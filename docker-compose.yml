@@ -1,0 +1,11 @@
+version: "3.7"
+services:
+  pagerdutycast:
+    image: e6cfefae5c49 # Change this after building the image or once I realease the image on docker hub
+    container_name: pagerdutycast
+    environment:
+      - NAME=XYZ  #change this to name of the Chromecast-enabled device
+      - IP=192.168.1.1 #change this to the IP address of the Chromecast-enabled device
+      - Pagerapi=XYZ #change this tp the PagerDuty API key linked to your account
+      - User=XYZ #change this to the User ID found in the address bar of the PagerDuty website
+    restart: unless-stopped
