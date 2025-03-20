@@ -209,9 +209,9 @@ def main():
         oncall()  # Fetch latest on-call schedule
         current_time = datetime.now().astimezone()
 
-        if current_time <= finishcall  + timedelta(minutes=1):
+        if current_time == finishcall  + timedelta(minutes=1):
             test(f"You just finished your duty at {finishcall.strftime("%H:%M")}")
-        elif current_time <= startcall + timedelta(minutes=5):
+        elif current_time == startcall - timedelta(minutes=5):
             test(f"You are about to start your duty at {startcall.strftime("%H:%M")}")
         elif startcall and finishcall and startcall <= current_time <= finishcall:
             oncallsay()
