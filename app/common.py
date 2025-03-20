@@ -1,10 +1,7 @@
 """Common helpers and utilities shared by examples."""
 
 import argparse
-import logging
-
 import zeroconf
-
 
 def add_log_arguments(parser: argparse.ArgumentParser) -> None:
     """Add arguments to control logging to the parser."""
@@ -16,20 +13,12 @@ def add_log_arguments(parser: argparse.ArgumentParser) -> None:
         "--show-zeroconf-debug", help="Enable zeroconf debug log", action="store_true"
     )
 
-
 def configure_logging(args: argparse.Namespace) -> None:
     """Configure logging according to command line arguments."""
-    fmt = "%(asctime)s %(levelname)s (%(threadName)s) [%(name)s] %(message)s"
-    datefmt = "%Y-%m-%d %H:%M:%S"
-    default_log_level = logging.DEBUG if args.show_debug else logging.INFO
-    logging.basicConfig(format=fmt, datefmt=datefmt, level=default_log_level)
-
     if args.show_debug:
-        logging.getLogger("pychromecast.dial").setLevel(logging.INFO)
-        logging.getLogger("pychromecast.discovery").setLevel(logging.INFO)
+        print("Debug log enabled")
     if args.show_discovery_debug:
-        logging.getLogger("pychromecast.dial").setLevel(logging.DEBUG)
-        logging.getLogger("pychromecast.discovery").setLevel(logging.DEBUG)
+        print("Discovery debug log enabled")
     if args.show_zeroconf_debug:
-        print("Zeroconf version: " + zeroconf.__version__)
-        logging.getLogger("zeroconf").setLevel(logging.DEBUG)
+        print("Zeroconf version:", zeroconf.__version__)
+        print("Zeroconf debug log enabled")
