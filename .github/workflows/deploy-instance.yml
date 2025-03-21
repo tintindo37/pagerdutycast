@@ -23,5 +23,6 @@ jobs:
           #install docker compose plugin.
           cd /var/lib/docker/volumes/portainer_data/_data/compose/1/
           docker compose down
+          docker compose pull
           docker compose up -d
           EOF
