@@ -190,6 +190,7 @@ def oncall():
         log_message(f"Error: {response.status_code} - {response.text}")
 # oncall cast
 def oncallsay():
+    global startcall, finishcall
     if startcall and finishcall:
         ring(Ring_Url)
         speak_text(f"You are on call from {startcall.strftime("%H:%M")} until {finishcall.strftime("%H:%M")}")
