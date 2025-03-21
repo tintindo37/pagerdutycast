@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   pagerdutycast:
-    image: tintindohoang/pagerdutycast:latest
+    image: tintindohoang/pagerdutycast:armv6
     container_name: pagerdutycast
     environment:
       - NAME=XYZ  #change this to name of the Chromecast-enabled device

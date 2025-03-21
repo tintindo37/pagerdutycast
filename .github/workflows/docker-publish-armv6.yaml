@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v4
       - name: build image
         run: |
-         docker buildx build --platform linux/arm/v6 . -t tintindohoang/pagerdutycast:armv6
+         docker buildx build --platform linux/arm/v6 -t tintindohoang/pagerdutycast:armv6 .
       - name: push image to docker hub
         run: |
           docker login -u tintindohoang -p ${{ secrets.DOCKER_HUB_TOKEN }}
