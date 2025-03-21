@@ -3,20 +3,20 @@ version: "3.7"
 services:
   pagerdutycast:
     depends_on:
-      - wireguard
+      - wireguard  # Removed incorrect condition, v3.7 does not support it
     image: tintindohoang/pagerdutycast:latest
     container_name: pagerdutycast-wg
     environment:
-      - NAME=XYZ  #change this to name of the Chromecast-enabled device
-      - IP=192.168.1.1 #change this to the IP address of the Chromecast-enabled device
-      - Pagerapi=XYZ #change this tp the PagerDuty API key linked to your account
-      - User=XYZ #change this to the User ID found in the address bar of the PagerDuty website
-      - IPVPN=172.168.12.7 #change this to the VPN IP address of the wireguard node
-      - Time=30 #defualt value without this tag is 15
-      - Timezone= #Add your timezone Asia/Ho_Chi_Minh or Europe/Warsaw
+      - NAME="XYZ"  # Change this to name of the Chromecast-enabled device
+      - IP="192.168.1.1"  # Change this to the IP address of the Chromecast device
+      - Pagerapi="XYZ"  # Change this to the PagerDuty API key
+      - User="XYZ"  # Change this to the User ID from PagerDuty
+      - IPVPN="172.168.12.7"  # Change this to the VPN IP of the WireGuard node
+      - Time=30  # Default value is 15, increase if needed
+      - Timezone=Europe/Warsaw  # Set your timezone
 
     restart: unless-stopped
-    network_mode: service:wireguard-my
+    network_mode: "service:wireguard"  # Ensure correct service name
     healthcheck:
       test: ["CMD", "/bin/bash", "/app/health_check.sh"]
       interval: 30s
@@ -30,8 +30,8 @@ services:
     networks:
       - net01
     volumes:
-      - '/home/ubuntu/wg:/config'  # Change this to the path where `wg0.conf` is located
-      - '/lib/modules:/lib/modules:ro'
+      - "/home/ubuntu/wg:/config"  # Path to WireGuard config
+      - "/lib/modules:/lib/modules:ro"
     environment:
       - PUID=1000
       - PGID=1000
@@ -40,6 +40,11 @@ services:
       - SYS_MODULE
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
+    healthcheck:
+      test: ["CMD-SHELL", "wg show interfaces || exit 1"]  # More reliable healthcheck
+      interval: 30s
+      retries: 3
+      timeout: 10s
 
 networks:
   net01:
