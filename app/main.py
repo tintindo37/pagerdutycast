@@ -193,7 +193,7 @@ def oncallsay():
     global startcall, finishcall
     if startcall and finishcall:
         ring(Ring_Url)
-        speak_text(f"You are on call from {startcall.strftime("%H:%M")} until {finishcall.strftime("%H:%M")}")
+        speak_text(f"You are on call from {startcall.strftime('%H:%M')} until {finishcall.strftime('%H:%M')}")
 #saying
 def say(text):
     ring(Ring_Url)
