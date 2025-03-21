@@ -11,7 +11,7 @@ from pydub import AudioSegment
 from io import BytesIO
 from common import add_log_arguments, configure_logging
 import logging
-
+import pytz
 
 #env from docker 
 env1 = os.getenv("IP")
@@ -19,8 +19,9 @@ env2 = os.getenv("NAME")
 env3 = os.getenv("Pagerapi")
 env4 = os.getenv("User")
 env5 = os.getenv("Time")
+env6 = os.getenv("Timezone")
 
-if not env1 or not env2 or not env3 or not env4:
+if not env1 or not env2 or not env3 or not env4 or not env6:
     raise ValueError("Error: One or more required environment variables are missing!")
     sys.exit(0)
 else: #conf for docker
@@ -29,6 +30,7 @@ else: #conf for docker
     PAGERDUTY_API_KEY = env3 # pg api
     USER_ID = env4 #pagerduty user
     CHECK_INTERVAL = int(env5)  # seconds between checks
+    target_timezone = pytz.timezone(f"{env6}") # timezone
 #Configuration
 BASE_TTS_URL = "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q={}&tl=En-gb" #tts provider 
 Ring_Url = "https://cdn.pixabay.com/download/audio/2025/01/13/audio_902fc3eeb8.mp3?filename=elevator-chimenotification-ding-recreation-287560.mp3"
@@ -63,9 +65,10 @@ finishcall = None
 
 # Google translate tts cast
 def speak_text(text):
-    encoded_text = urllib.parse.quote(text)
+    tts=limit_string_length(text) #limit charakter to google transalte tts 
+    encoded_text = urllib.parse.quote(tts)
     media_url = BASE_TTS_URL.format(encoded_text)
-    log_message(f'Speaking: "{text}"')
+    log_message(f'Speaking: "{tts}"')
     cast.media_controller.play_media(media_url, "audio/mp3")
     player_state = None
     t = 30.0
@@ -169,52 +172,83 @@ def oncall():
         if shifts:
             shifts.sort(key=lambda x: x["start"])
             earliest_shift = shifts[0]
-            latest_shift = shifts[-1]
+            lasay_shift = shifts[-1]
 
-            # Convert UTC timestamps to local time in HH:MM format
-            startcall = date_parser.parse(earliest_shift["start"]).astimezone()
-            finishcall = date_parser.parse(latest_shift["end"]).astimezone()
+            # Convert UTC timestamps to local time 
+            startcall = date_parser.parse(earliest_shift["start"])
+            startcall = startcall.astimezone(pytz.utc).astimezone(target_timezone)
 
-            log_message(f"Today's On-Call Schedule: {startcall.strftime("%H:%M")} to {finishcall.strftime("%H:%M")}")
+            finishcall = date_parser.parse(lasay_shift["end"])
+            finishcall = finishcall.astimezone(pytz.utc).astimezone(target_timezone)
+
+           #log_message(f"Today's On-Call Schedule: {startcall.strftime("%H:%M")} to {finishcall.strftime("%H:%M")}")
         else:
             log_message("No on-call shifts found for today.")
-            startcall = None
-            finishcall = None
+            startcall = "None"
+            finishcall = "None"
     else:
         log_message(f"Error: {response.status_code} - {response.text}")
 # oncall cast
 def oncallsay():
     if startcall and finishcall:
         ring(Ring_Url)
-        speak_text(limit_string_length(f"You are on call from {startcall.strftime("%H:%M")} until {finishcall.strftime("%H:%M")}"))
-#testing
-def test(text):
+        speak_text(f"You are on call from {startcall.strftime("%H:%M")} until {finishcall.strftime("%H:%M")}")
+#saying
+def say(text):
     ring(Ring_Url)
-    speak_text(limit_string_length(text))
+    speak_text(text)
 
 def main():
     global startcall, finishcall
     if args.test:
         oncall()
         oncallsay()
-        test("1 New alarm: test alarm")
+        say("1 New alarm: say alarm")
         sys.exit(0)
 
     previous_incidents = set()
     log_message("testing first time boot")
     oncall()
     oncallsay()
-    test("1 New alarm: test alarm")
-    while True:
-        oncall()  # Fetch latest on-call schedule
-        current_time = datetime.now().astimezone()
+    say("1 New alarm: test alarm")
 
-        if current_time == finishcall  + timedelta(minutes=1):
-            test(f"You just finished your duty at {finishcall.strftime("%H:%M")}")
-        elif current_time == startcall - timedelta(minutes=5):
-            test(f"You are about to start your duty at {startcall.strftime("%H:%M")}")
-        elif startcall and finishcall and startcall <= current_time <= finishcall:
-            oncallsay()
+    startcall_announced = False
+    finishcall_announced = False
+    about_to_start_announced = False
+    post_finishcall_time = None
+
+    while True:
+        try:
+            oncall()  # Fetch latest on-call schedule
+            current_time = datetime.now(pytz.utc).astimezone(target_timezone) 
+
+            if startcall != "null" and finishcall != "null":
+                if current_time >= finishcall + timedelta(minutes=1) and current_time < finishcall + timedelta(minutes=2) and not finishcall_announced:
+                    log_message(f"Finished duty at {finishcall.strftime('%H:%M')}")
+                    finishcall_announced = True
+                    post_finishcall_time = current_time
+                elif current_time >= startcall - timedelta(minutes=5) and current_time < startcall - timedelta(minutes=4) and not about_to_start_announced:
+                    log_message(f"About to start duty at {startcall.strftime('%H:%M')}")
+                    about_to_start_announced = True
+                elif startcall <= current_time <= finishcall:
+                    log_message(f"On duty between {startcall} - {finishcall}")
+                elif current_time == startcall and not startcall_announced:
+                    oncallsay()
+                    startcall_announced = True
+                elif current_time < startcall:
+                    startcall_announced = False
+                    about_to_start_announced = False
+                    log_message(f"Waiting... Current time: {current_time}, will run between {startcall} - {finishcall}")
+                elif current_time > finishcall:
+                    finishcall_announced = False
+                    if post_finishcall_time is None or current_time >= post_finishcall_time + timedelta(hours=1):
+                        log_message(f"Waiting after finishcall... Current time: {current_time}")
+                        post_finishcall_time = current_time
+                else:
+                    log_message(f"Waiting... Current time: {current_time}, will run between {startcall} - {finishcall}")
+            else:
+                log_message("Start or finish call times are not set. Waiting for 1800 seconds")
+    
             try:
                 incidents = get_pagerduty_incidents()
                 if incidents:
@@ -227,19 +261,19 @@ def main():
                             previous_incidents.add(incident_id)
                             n += 1
                     else:
-                        log_message("No new incidents to announce.")
+                        say(f"Old alarm triggered")
                 else:
                     log_message("No triggered incidents found.")
                 time.sleep(CHECK_INTERVAL)
-            except KeyboardInterrupt:
-                log_message("Script terminated by user.")
-                break
             except Exception as e:
-                log_message(f"An error occurred: {e}")
+                log_message(f"An error occurred during pagerduty check: {e}")
                 time.sleep(5)
-        else:
-            log_message(f"Waiting... Current time: {current_time.strftime("%H:%M")}, will run between {startcall.strftime("%H:%M")} - {finishcall.strftime("%H:%M")}")
-            time.sleep(1800)
+        except KeyboardInterrupt:
+            log_message("Script terminated by user.")
+            break
+        except Exception as e:
+            log_message(f"An error occurred: {e}")
+            time.sleep(5)
 
 if __name__ == "__main__":
     main()

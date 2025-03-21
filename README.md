@@ -22,6 +22,7 @@ services:
       - IP= #Add the IP address of the Chromecast-enabled device 
       - Pagerapi= #Add the PagerDuty API key linked to your account
       - User= #Add the User ID found in the address bar of the PagerDuty website
+      - Timezone= #Add your timezone Asia/Ho_Chi_Minh or Europe/Warsaw
     restart: unless-stopped
 ```
 ---
@@ -59,6 +60,7 @@ services:
       - Pagerapi= #Add the PagerDuty API key linked to your account
       - User= #Add the User ID found in the address bar of the PagerDuty website
       - IPVPN= #Add  the VPN IP address of the wireguard node
+      - Timezone= #Add your timezone Asia/Ho_Chi_Minh or Europe/Warsaw
     restart: unless-stopped
     network_mode: service:wireguard-my
     healthcheck:
