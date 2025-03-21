@@ -1,5 +1,4 @@
-FROM python:3.13.2-bookworm
-
+FROM python:3.12.3
 
 COPY app/ /app
 
