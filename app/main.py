@@ -190,6 +190,7 @@ def oncall():
         log_message(f"Error: {response.status_code} - {response.text}")
 # oncall cast
 def oncallsay():
+    global startcall, finishcall
     if startcall and finishcall:
         ring(Ring_Url)
         speak_text(f"You are on call from {startcall.strftime("%H:%M")} until {finishcall.strftime("%H:%M")}")
@@ -224,11 +225,11 @@ def main():
 
             if startcall != "null" and finishcall != "null":
                 if current_time >= finishcall + timedelta(minutes=1) and current_time < finishcall + timedelta(minutes=2) and not finishcall_announced:
-                    log_message(f"Finished duty at {finishcall.strftime('%H:%M')}")
+                    say(f"Finished duty at {finishcall.strftime('%H:%M')}")
                     finishcall_announced = True
                     post_finishcall_time = current_time
                 elif current_time >= startcall - timedelta(minutes=5) and current_time < startcall - timedelta(minutes=4) and not about_to_start_announced:
-                    log_message(f"About to start duty at {startcall.strftime('%H:%M')}")
+                    say(f"About to start duty at {startcall.strftime('%H:%M')}")
                     about_to_start_announced = True
                 elif startcall <= current_time <= finishcall:
                     log_message(f"On duty between {startcall} - {finishcall}")
@@ -256,8 +257,7 @@ def main():
                     if new_incidents:
                         n = 1
                         for incident_id, title in new_incidents.items():
-                            ring(Ring_Url)
-                            speak_text(limit_string_length(f"{n} New alarm: {title}"))
+                            say(f"{n} New alarm: {title}")
                             previous_incidents.add(incident_id)
                             n += 1
                     else:

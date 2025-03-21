@@ -2,4 +2,5 @@
 docker-compose.yml
 README.md
 docker-compose-vpn.yml
-.github/workflows/docker-publish.yml
+.github/workflows/**/*
+.github/workflows
