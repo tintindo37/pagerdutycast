@@ -13,6 +13,8 @@ services:
       - User=XYZ #change this to the User ID found in the address bar of the PagerDuty website
       - IPVPN=172.168.12.7 #change this to the VPN IP address of the wireguard node
       - Time=30 #defualt value without this tag is 15
+      - Timezone= #Add your timezone Asia/Ho_Chi_Minh or Europe/Warsaw
+
     restart: unless-stopped
     network_mode: service:wireguard-my
     healthcheck:
