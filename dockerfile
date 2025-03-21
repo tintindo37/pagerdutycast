@@ -1,4 +1,4 @@
-FROM --platform=linux/arm/v6 alpine:3.14
+FROM alpine:3.14
 
 # Set environment variables
 ENV TIME=15
@@ -11,7 +11,7 @@ RUN apk update && apk add --no-cache \
     python3 py3-pip ffmpeg libsndfile iputils && \
     rm -rf /var/cache/apk/*  # Clean up cache to reduce image size
 # Install Python dependencies
-RUN pip3 install --no-cache-dir -r /app/requirements.txt --break-system-packages
+RUN pip3 install --no-cache-dir -r /app/requirements.txt 
 
 # Define the command
 CMD ["python3", "/app/main.py"]

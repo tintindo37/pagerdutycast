@@ -1,4 +1,4 @@
-PyChromecast==14.0.5
+PyChromecast
 zeroconf==0.146.1
 requests==2.32.3
 ffmpeg==1.4
