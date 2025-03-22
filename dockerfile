@@ -1,4 +1,4 @@
-FROM alpine:3.14
+FROM alpine:3.21.3
 
 # Set environment variables
 ENV TIME=15
