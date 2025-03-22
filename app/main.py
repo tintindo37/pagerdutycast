@@ -209,8 +209,8 @@ def main():
 
     previous_incidents = set()
     log_message("testing first time boot")
-    oncall()
-    oncallsay()
+    #oncall()
+    #oncallsay()
     say("1 New alarm: test alarm")
 
     startcall_announced = False
