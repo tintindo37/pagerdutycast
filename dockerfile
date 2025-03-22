@@ -1,18 +1,17 @@
-FROM python:3.13.2-slim-bookworm
+FROM alpine:3.21.3
 
+# Set environment variables
+ENV TIME=15
 
+# Copy application files
 COPY app/ /app
 
-#defualt variables
-ENV Time=15
+# Install dependencies
+RUN apk update && apk add --no-cache \
+    python3 py3-pip ffmpeg libsndfile iputils bash && \
+    rm -rf /var/cache/apk/*  # Clean up cache to reduce image size
+# Install Python dependencies
+RUN pip3 install --no-cache-dir -r /app/requirements.txt 
 
-
-# Install FFmpeg and other dependencies
-RUN apt-get update && \
-    apt-get install -y ffmpeg libsndfile1 iputils-ping && \
-    rm -rf /var/lib/apt/lists/*
-
-# PYTHON dependencies
-    RUN pip install -r /app/requirements.txt
-
-CMD ["python", "/app/main.py"]
+# Define the command
+CMD ["python3", "/app/main.py"]
