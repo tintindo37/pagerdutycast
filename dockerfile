@@ -11,7 +11,7 @@ RUN apk update && apk add --no-cache \
     python3 py3-pip ffmpeg libsndfile iputils && \
     rm -rf /var/cache/apk/*  # Clean up cache to reduce image size
 # Install Python dependencies
-RUN pip3 install --no-cache-dir -r /app/requirements.txt 
+RUN pip3 install --no-cache-dir -r /app/requirements.txt --break-system-packages
 
 # Define the command
 CMD ["python3", "/app/main.py"]
