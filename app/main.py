@@ -223,7 +223,7 @@ def main():
             oncall()  # Fetch latest on-call schedule
             current_time = datetime.now(pytz.utc).astimezone(target_timezone) 
 
-            if startcall != "null" and finishcall != "null":
+            if startcall != "None" and finishcall != "None":
                 if current_time >= finishcall + timedelta(minutes=1) and current_time < finishcall + timedelta(minutes=2) and not finishcall_announced:
                     say(f"Finished duty at {finishcall.strftime('%H:%M')}")
                     finishcall_announced = True
