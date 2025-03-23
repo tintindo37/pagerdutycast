@@ -1,4 +1,4 @@
-# PagerDuty Alarm Notifier with Chromecast Support for armv6 like RPI Zero
+# PagerDuty Alarm Notifier with Chromecast Support for armv6 like RPI Zero and arm64 devices
 
 This script checks for triggered alarms in PagerDuty. If an alarm is detected, it sends the information to a Chromecast-enabled device and reads it out.
 
@@ -15,7 +15,7 @@ This script checks for triggered alarms in PagerDuty. If an alarm is detected, i
 version: "3.7"
 services:
   pagerdutycast:
-    image: tintindohoang/pagerdutycast:armv6
+    image: tintindohoang/pagerdutycast:arm
     container_name: pagerdutycast
     environment:
       - NAME=  #Add the name of the Chromecast-enabled device
