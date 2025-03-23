@@ -208,7 +208,7 @@ def main():
         sys.exit(0)
 
     previous_incidents = set()
-    log_message("testing first time boot")
+    log_message("testing first time boot and casting")
     #oncall()
     #oncallsay()
     say("1 New alarm: test alarm")
