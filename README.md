@@ -1,6 +1,6 @@
-# PagerDuty Alarm Notifier with Chromecast Support for armv6 armv7 and arm64 devices like RPI or ARM cloud servers like AWS Graviton Instances or OCI Ampere A1 Instances based on apline linux
+# PagerDuty Alarm Notifier with Chromecast Support for ARM 
 
-This script checks for triggered alarms in PagerDuty. If an alarm is detected, it sends the information to a Chromecast-enabled device and reads it out.
+Armv6, armv7 and arm64 devices like RPI or ARM cloud servers like AWS Graviton Instances or OCI Ampere A1 Instances based on apline linux. This script checks for triggered alarms in PagerDuty. If an alarm is detected, it sends the information to a Chromecast-enabled device and reads it out.
 
 ## Quick Start
 
