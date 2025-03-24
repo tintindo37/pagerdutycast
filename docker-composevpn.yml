@@ -1,0 +1,44 @@
+version: "3.7"
+
+services:
+  pagerdutycast:
+    depends_on:
+      - wireguard
+    image: tintindohoang/pagerdutycast:arm
+    container_name: pagerdutycast-wg
+    environment:
+      - NAME=  #Add the name of the Chromecast-enabled device
+      - IP= #Add the IP address of the Chromecast-enabled device 
+      - Pagerapi= #Add the PagerDuty API key linked to your account
+      - User= #Add the User ID found in the address bar of the PagerDuty website
+      - IPVPN= #Add  the VPN IP address of the wireguard node
+      - Timezone= #Add your timezone Asia/Ho_Chi_Minh or Europe/Warsaw
+    restart: unless-stopped
+    network_mode: service:wireguard-my
+    healthcheck:
+      test: ["CMD", "/bin/bash", "/app/health_check.sh"]
+      interval: 30s
+      retries: 3
+      timeout: 10s
+
+  wireguard:
+    image: linuxserver/wireguard
+    container_name: wireguard
+    restart: unless-stopped
+    networks:
+      - net01
+    volumes:
+      - '/home/ubuntu/wg:/config'  # add this to the path where `wg0.conf` is located
+      - '/lib/modules:/lib/modules:ro'
+    environment:
+      - PUID=1000
+      - PGID=1000
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+
+networks:
+  net01:
+    driver: bridge
