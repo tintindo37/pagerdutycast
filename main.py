@@ -13,15 +13,35 @@ from common import add_log_arguments, configure_logging
 import logging
 import pytz
 
-#local
+#env from docker 
+"""
+env1 = os.getenv("IP")
+env2 = os.getenv("NAME")
+env3 = os.getenv("Pagerapi")
+env4 = os.getenv("User")
+env5 = os.getenv("Time")
+env6 = os.getenv("Timezone")
+
+if not env1 or not env2 or not env3 or not env4 or not env6:
+    raise ValueError("Error: One or more required environment variables are missing!")
+    sys.exit(0)
+else: #conf for docker
+    CAST_IP = env1 # IP of Google Home Mini or any Chromecast-enabled device
+    CAST_NAME = env2  # Name of Google Home Mini or any Chromecast-enabled device
+    PAGERDUTY_API_KEY = env3 # pg api
+    USER_ID = env4 #pagerduty user
+    CHECK_INTERVAL = int(env5)  # seconds between checks
+    target_timezone = pytz.timezone(f"{env6}") # timezone""
+"""
+
+#local configuration
 CAST_NAME = ""
 CAST_IP = ""
 BASE_TTS_URL = "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q={}&tl=En-gb"
 PAGERDUTY_API_KEY = ""  # Your PagerDuty API key
 USER_ID = ""  # Your PagerDuty User ID
-CHECK_INTERVAL = 20  # Check every 30 seconds
-Ring_Url = "https://cdn.pixabay.com/download/audio/2025/01/13/audio_902fc3eeb8.mp3?filename=elevator-chimenotification-ding-recreation-287560.mp3"
-target_timezone = pytz.timezone("Asia/Ho_Chi_Minh")
+CHECK_INTERVAL = 20  # Check every 20 seconds
+target_timezone = pytz.timezone("Europe/Warsaw") # Your timezone
 
 #Configuration
 BASE_TTS_URL = "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q={}&tl=En-gb" #tts provider 
@@ -29,7 +49,7 @@ Ring_Url = "https://cdn.pixabay.com/download/audio/2025/01/13/audio_902fc3eeb8.m
 parser = argparse.ArgumentParser(description="PagerDuty to TTS on Chromecast")
 add_log_arguments(parser)
 parser.add_argument("--cast", help='Name of cast device (default: "%s")' % CAST_NAME, default=CAST_NAME)
-parser.add_argument("--test", help="Trigger say alarm", action="store_true")
+parser.add_argument("--test", help="Trigger test alarm", action="store_true")
 args = parser.parse_args()
 
 configure_logging(args)
@@ -182,9 +202,10 @@ def oncall():
         log_message(f"Error: {response.status_code} - {response.text}")
 # oncall cast
 def oncallsay():
+    global startcall, finishcall
     if startcall and finishcall:
         ring(Ring_Url)
-        speak_text(f"You are on call from {startcall.strftime("%H:%M")} until {finishcall.strftime("%H:%M")}")
+        speak_text(f"You are on call from {startcall.strftime('%H:%M')} until {finishcall.strftime('%H:%M')}")
 #saying
 def say(text):
     ring(Ring_Url)
@@ -200,9 +221,7 @@ def main():
 
     previous_incidents = set()
     log_message("testing first time boot")
-    oncall()
-  #  oncallsay()
-  #  say("1 New alarm: test alarm")
+    say("1 New alarm: test alarm")
 
     startcall_announced = False
     finishcall_announced = False
@@ -214,13 +233,13 @@ def main():
             oncall()  # Fetch latest on-call schedule
             current_time = datetime.now(pytz.utc).astimezone(target_timezone) 
 
-            if startcall != "null" and finishcall != "null":
+            if startcall != "None" and finishcall != "None":
                 if current_time >= finishcall + timedelta(minutes=1) and current_time < finishcall + timedelta(minutes=2) and not finishcall_announced:
-                    log_message(f"Finished duty at {finishcall.strftime('%H:%M')}")
+                    say(f"Finished duty at {finishcall.strftime('%H:%M')}")
                     finishcall_announced = True
                     post_finishcall_time = current_time
                 elif current_time >= startcall - timedelta(minutes=5) and current_time < startcall - timedelta(minutes=4) and not about_to_start_announced:
-                    log_message(f"About to start duty at {startcall.strftime('%H:%M')}")
+                    say(f"About to start duty at {startcall.strftime('%H:%M')}")
                     about_to_start_announced = True
                 elif startcall <= current_time <= finishcall:
                     log_message(f"On duty between {startcall} - {finishcall}")
@@ -248,8 +267,7 @@ def main():
                     if new_incidents:
                         n = 1
                         for incident_id, title in new_incidents.items():
-                            ring(Ring_Url)
-                            speak_text(limit_string_length(f"{n} New alarm: {title}"))
+                            say(f"{n} New alarm: {title}")
                             previous_incidents.add(incident_id)
                             n += 1
                     else:
