@@ -18,7 +18,7 @@ env1 = os.getenv("IP")
 env2 = os.getenv("NAME")
 env3 = os.getenv("Pagerapi")
 env4 = os.getenv("User")
-env5 = os.getenv("Time")
+env5 = os.getenv('TIME', '15') 
 env6 = os.getenv("Timezone")
 
 if not env1 or not env2 or not env3 or not env4 or not env6:
