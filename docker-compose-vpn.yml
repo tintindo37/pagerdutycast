@@ -14,6 +14,7 @@ services:
       - IPVPN=172.168.12.7 #change this to the VPN IP address of the wireguard node
       - Time=30 #defualt value without this tag is 15
       - Timezone= #Add your timezone Asia/Ho_Chi_Minh or Europe/Warsaw
+      - AlARMURL = #URL TO THE MP3 FILE FROM THE WEB
 
     restart: unless-stopped
     network_mode: service:wireguard-my

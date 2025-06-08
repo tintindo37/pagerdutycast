@@ -10,5 +10,6 @@ services:
       - User=XYZ #change this to the User ID found in the address bar of the PagerDuty website
       - Time=30 #defualt value without this tag is 15
       - Timezone= #Add your timezone Asia/Ho_Chi_Minh or Europe/Warsaw
+      - AlARMURL = #URL TO THE MP3 FILE FROM THE WEB
 
     restart: unless-stopped
