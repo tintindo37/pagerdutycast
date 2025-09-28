@@ -1,0 +1,17 @@
+name: Build and Publish Image to Docker Hub Repo for armv6
+on:
+  [workflow_dispatch]
+ 
+jobs:
+  publish_images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: build image
+        run: |
+         docker buildx build --platform linux/arm/v6 . -t tintindohoang/pagerdutycast:armv6
+      - name: push image to docker hub
+        run: |
+          docker login -u tintindohoang -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push tintindohoang/pagerdutycast:armv6
