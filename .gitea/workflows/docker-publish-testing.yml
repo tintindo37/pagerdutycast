@@ -1,9 +1,9 @@
-name:  Build and Publish image to Docker Hub
+name:  Build and Publish image to Gitea Container Registry
 
 on:
   push:
     branches:
-      - main
+      - testing
   workflow_dispatch:
 jobs:
   docker:
@@ -19,8 +19,9 @@ jobs:
       - name: Login to Docker Hub
         uses: https://github.com/docker/login-action@v3
         with:
+          registry: repo.tintindo.xyz
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+          password: ${{ secrets.TOKEN_GITEA_CONTAINER }}
       - name: Set up QEMU
         uses: https://github.com/docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -32,4 +33,4 @@ jobs:
           context: .
           file: ./dockerfile 
           push: true
-          tags: tintindohoang/pagerdutycast:latest
+          tags: tintindohoang/pagerdutycast:testing
