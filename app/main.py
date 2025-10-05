@@ -13,27 +13,32 @@ from common import add_log_arguments, configure_logging
 import logging
 import pytz
 
+
 #env from docker 
 env1 = os.getenv("IP")
 env2 = os.getenv("NAME")
 env3 = os.getenv("Pagerapi")
 env4 = os.getenv("User")
-env5 = os.getenv('TIME', '15') 
+env5 = os.getenv("Time")
 env6 = os.getenv("Timezone")
-
+env7 = os.getenv("AlARMURL")
 if not env1 or not env2 or not env3 or not env4 or not env6:
     raise ValueError("Error: One or more required environment variables are missing!")
     sys.exit(0)
 else: #conf for docker
+    if not env7:
+        Ring_Url = "https://cdn.pixabay.com/download/audio/2025/01/13/audio_902fc3eeb8.mp3?filename=elevator-chimenotification-ding-recreation-287560.mp3"
+    else:
+        Ring_Url = env7 # url for alarm mp3 
     CAST_IP = env1 # IP of Google Home Mini or any Chromecast-enabled device
     CAST_NAME = env2  # Name of Google Home Mini or any Chromecast-enabled device
     PAGERDUTY_API_KEY = env3 # pg api
     USER_ID = env4 #pagerduty user
     CHECK_INTERVAL = int(env5)  # seconds between checks
     target_timezone = pytz.timezone(f"{env6}") # timezone
+    
 #Configuration
 BASE_TTS_URL = "http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q={}&tl=En-gb" #tts provider 
-Ring_Url = "https://cdn.pixabay.com/download/audio/2025/01/13/audio_902fc3eeb8.mp3?filename=elevator-chimenotification-ding-recreation-287560.mp3"
 parser = argparse.ArgumentParser(description="PagerDuty to TTS on Chromecast")
 add_log_arguments(parser)
 parser.add_argument("--cast", help='Name of cast device (default: "%s")' % CAST_NAME, default=CAST_NAME)
@@ -209,8 +214,8 @@ def main():
 
     previous_incidents = set()
     log_message("testing first time boot")
-    #oncall()
-    #oncallsay()
+    oncall()
+    oncallsay()
     say("1 New alarm: test alarm")
 
     startcall_announced = False
@@ -223,7 +228,7 @@ def main():
             oncall()  # Fetch latest on-call schedule
             current_time = datetime.now(pytz.utc).astimezone(target_timezone) 
 
-            if startcall != "None" and finishcall != "None":
+            if startcall != "null" and finishcall != "null":
                 if current_time >= finishcall + timedelta(minutes=1) and current_time < finishcall + timedelta(minutes=2) and not finishcall_announced:
                     say(f"Finished duty at {finishcall.strftime('%H:%M')}")
                     finishcall_announced = True
